@@ -2,8 +2,8 @@
 name: deploy-cloudflare
 description: 브라우저에서 처리하는 정적 웹 서비스(Next.js 정적 내보내기, Astro 등)를 GitHub 비공개 저장소와 Cloudflare Pages로 배포하고, 배포 전후를 점검하는 스킬. 배포 전 점검(정적 빌드, 파일 수·25MB 한도, 사이트 주소 환경 변수), 애드센스·GA4 준비(정책 페이지, robots·sitemap·ads.txt, 동의 기본값), 캐시 헤더(_headers), GitHub push, Cloudflare 연결(대시보드 Git 연결 또는 wrangler), 배포 후 확인(실제 주소 응답, 헤더, 서치 콘솔)까지 다룬다. 사용자가 "배포", "배포 점검", "출시", "Cloudflare", "pages.dev", "사이트 올리기", "애드센스 신청 전 점검", "_headers", "wrangler"를 말하거나, 새 정적 사이트를 공개하려 할 때, 배포 후 사이트가 제대로 뜨는지 확인하려 할 때는 직접 언급하지 않아도 반드시 이 스킬을 쓴다.
 metadata:
-  version: 0.1.0
-  updated: 2026-11-05
+  version: 0.2.0
+  updated: 2026-11-06
 ---
 
 # deploy-cloudflare: 정적 웹 서비스 배포와 점검
@@ -46,7 +46,8 @@ metadata:
 3. **사이트 주소와 공개 값:** 사이트맵·canonical·robots가 쓰는 주소를 환경 변수로 받는지 확인한다. 기본값이 `localhost`이면 Cloudflare 빌드에서 그 변수가 비었을 때 빌드가 실패하게 해 두는 것이 안전하다. 실패하지 않으면 검색엔진에 localhost 주소가 제출된다. Cloudflare Pages 빌드에는 `CF_PAGES=1`이 설정되므로 이것으로 구분할 수 있다.
    문의 이메일, 운영자 이름처럼 **페이지에 공개되는 값도 같은 기준으로 본다.** 설정 파일에 `contact@<name>.example`, `<서비스> 운영자` 같은 기본값이 있으면, 변수를 빠뜨린 배포에 가짜 연락처가 그대로 나간다. 그런 값도 `CF_PAGES=1`에서 비어 있으면 빌드를 실패시키거나, 값이 없을 때 그 줄을 숨기도록 권한다. 가짜 연락처는 애드센스 심사와 개인정보 보호법 모두에 불리하다.
 4. **결과 폴더에만 있는 파일:** Cloudflare Git 연결은 저장소의 소스에서 새로 빌드한다. 그래서 결과 폴더(`dist/`, `out/`)에만 있고 소스(`public/` 등)나 빌드 과정에서 만들어지지 않는 파일은 배포에서 사라진다. 결과 폴더를 손으로 고친 흔적이 있거나, 결과 폴더의 정적 파일이 `public/`에 없으면 고칠 것으로 보고한다. 결과 폴더는 `.gitignore`에 넣는다.
-5. **25MB를 넘는 파일:** 모델이나 큰 데이터는 20MiB 단위로 나누고, 나눈 목록과 SHA-256을 manifest에 적은 뒤 브라우저에서 이어 붙이는 방식으로 해결한다(PixelUp의 `scripts/onnx/build_models.py`와 워커의 `loadModelBytes` 참고).
+5. **다국어 사이트:** 언어가 둘 이상이거나 글로벌 대상이면 [references/i18n.md](references/i18n.md)로 주소 구조, `<html lang>`, canonical, hreflang(x-default 포함), 사이트맵 alternates, 자동 이동 금지를 점검한다.
+6. **25MB를 넘는 파일:** 모델이나 큰 데이터는 20MiB 단위로 나누고, 나눈 목록과 SHA-256을 manifest에 적은 뒤 브라우저에서 이어 붙이는 방식으로 해결한다(PixelUp의 `scripts/onnx/build_models.py`와 워커의 `loadModelBytes` 참고).
 
 ### 2. 애드센스·분석 준비 점검
 

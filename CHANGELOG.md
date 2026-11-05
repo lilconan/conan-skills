@@ -2,6 +2,10 @@
 
 플러그인별 자세한 기록은 `plugins/<플러그인>/CHANGELOG.md`에 있습니다.
 
+## 2026-11-06
+
+- `conan-web` 0.5.0: 다국어 사이트 점검(deploy-cloudflare `references/i18n.md`, check_search.py의 lang·hreflang 검사).
+
 ## 2026-11-05
 
 - `conan-web` 0.4.2: check_search.py 연결 오류 처리, 이벤트 설계 규칙 보완.

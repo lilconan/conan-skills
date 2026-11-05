@@ -2,8 +2,8 @@
 name: register-search
 description: 배포된 정적 웹사이트(Cloudflare Pages의 Next.js·Astro·Vite 사이트 등)를 검색엔진에 등록하는 스킬. 구글 서치 콘솔과 네이버 서치어드바이저의 HTML 태그 인증 값을 사이트 설정에 넣어 배포하고, 소유 확인과 사이트맵 제출을 하고, Bing 웹마스터 도구는 서치 콘솔에서 가져온다. 사용자가 "서치 콘솔", "구글 검색 등록", "네이버 검색 등록", "서치어드바이저", "웹마스터 도구", "Bing 등록", "사이트맵 제출", "검색에 안 나와", "색인", "인증 태그", "site-verification"을 말하거나, 새 사이트를 공개한 직후 검색 노출을 준비할 때, 도메인을 바꿔 다시 인증해야 할 때는 직접 언급하지 않아도 반드시 이 스킬을 쓴다.
 metadata:
-  version: 0.1.1
-  updated: 2026-11-05
+  version: 0.2.0
+  updated: 2026-11-06
 ---
 
 # register-search: 검색엔진에 사이트 등록하기
@@ -57,6 +57,12 @@ Chrome 도구로 열 수 없으므로 사용자에게 아래를 안내하고 `co
    - 제출 직후 상태가 "가져올 수 없음"으로 나오는 경우가 많다. 사이트맵 파일이 200·`application/xml`·올바른 XML이면 몇 시간~하루 뒤 "성공"으로 바뀌므로 사용자에게 그렇게 설명한다.
 2. **네이버**: 사용자에게 "소유확인"을 누르고, 요청 → 사이트맵 제출에 사이트맵 주소를 넣으라고 안내한다. 주소는 `robots.txt`의 `Sitemap:` 줄을 그대로 쓴다(Next.js는 `/sitemap.xml`, Astro는 `/sitemap-index.xml`이라 `/sitemap.xml`은 404). RSS가 있으면 RSS 제출도 함께.
 3. **Bing**: [references/search-consoles.md](references/search-consoles.md)의 "Bing"을 따른다. 웹마스터 도구 → 사이트 추가 → **Google Search Console에서 가져오기** → 구글 계정 선택과 읽기 권한 허용(사용자 승인 필요) → 가져올 사이트 선택 → Import. 서치 콘솔에 제출한 사이트맵도 함께 넘어온다. Bing용 인증 태그(`msvalidate.01`)는 이 방식에선 필요 없다. 다만 가져온 사이트는 구글 인증에 기대므로, 구글 인증 태그를 지우거나 계정을 바꾸면 Bing 인증도 풀릴 수 있다. 오래 쓸 사이트면 Bing 설정 → 소유권 확인에서 `msvalidate.01` 값을 받아 같은 지도에 넣어 두라고 권한다(선택).
+
+## 언어를 추가하거나 주소 구조를 바꾼 뒤
+
+- `check_search.py`의 html lang·hreflang·사이트맵 언어 대체 링크 줄이 기대대로인지 본다(기준은 `deploy-cloudflare`의 `references/i18n.md`).
+- URL 접두어 속성은 하위 경로(`/ko/` 등)를 함께 포함하므로 새로 인증할 필요는 없다. 구글 서치 콘솔과 네이버 서치어드바이저에 사이트맵을 다시 제출한다.
+- 네이버는 한국어 주소(예: `/ko`)를 웹 페이지 수집 요청에 넣으라고 사용자에게 안내한다.
 
 ## 5. 기록과 보고
 

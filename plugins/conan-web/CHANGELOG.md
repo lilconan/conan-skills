@@ -1,5 +1,11 @@
 # conan-web 변경 기록
 
+## 0.5.0 (2026-11-06)
+
+- `deploy-cloudflare` 0.2.0: 다국어 정적 사이트 점검(`references/i18n.md`) 추가. 기본 언어는 `/`, 나머지는 `/<코드>/`, 언어마다 `<html lang>`(Next.js는 route group별 루트 레이아웃), canonical, hreflang과 x-default, 사이트맵 alternates, 자동 이동 금지와 안내 띠, 다국어 404, 정책 페이지 번역.
+- `register-search` 0.2.0: `check_search.py`가 홈의 html lang, canonical, hreflang(x-default 누락·다른 주소 섞임 검사)과 사이트맵의 언어 대체 링크 수를 표에 보여 줌. 언어를 추가한 뒤 사이트맵 재제출과 네이버 수집 요청 안내.
+  - 근거: PixelUp을 글로벌 대상으로 바꾸며 영어를 기본 주소로, 한국어를 `/ko`로 옮긴 과정.
+
 ## 0.4.2 (2026-11-05)
 
 - `register-search` 0.1.1: `check_search.py`가 DNS 실패·연결 거부·타임아웃에서 멈추지 않고 표에 "연결 실패"로 적음.

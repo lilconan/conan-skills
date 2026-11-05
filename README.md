@@ -6,7 +6,7 @@ lilconan이 여러 프로젝트에서 함께 쓰는 Claude Code 스킬 묶음(�
 
 | 플러그인 | 버전 | 스킬 | 하는 일 |
 |---|---|---|---|
-| `conan-web` | 0.4.2 | `deploy-cloudflare` | 브라우저에서 처리하는 정적 사이트를 GitHub와 Cloudflare Pages로 배포하고 배포 전후를 점검 |
+| `conan-web` | 0.5.0 | `deploy-cloudflare` | 브라우저에서 처리하는 정적 사이트를 GitHub와 Cloudflare Pages로 배포하고 배포 전후를 점검 |
 | | | `setup-analytics` | 배포된 정적 사이트에 구글 애널리틱스 4와 Cloudflare Web Analytics를 연결하고, 사용자 행동 이벤트를 설계하고, 홍보용 UTM 링크 표를 만듦 |
 | | | `register-search` | 구글 서치 콘솔·네이버 서치어드바이저·Bing에 사이트를 등록하고 사이트맵 제출 |
 

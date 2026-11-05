@@ -77,6 +77,34 @@ def main() -> int:
     if re.search(r'<meta[^>]*name="robots"[^>]*content="[^"]*noindex', html):
         add("홈 noindex", "고칠 것", "홈 페이지에 noindex가 있음")
 
+    # Language signals: <html lang>, canonical and hreflang alternates (multilingual sites).
+    lang = re.search(r"<html[^>]*\slang=\"([^\"]+)\"", html)
+    add(
+        "html lang",
+        "있음" if lang else "고칠 것",
+        lang.group(1) if lang else "lang 속성 없음",
+    )
+    canon = re.search(r'<link[^>]*rel="canonical"[^>]*href="([^"]+)"', html)
+    add(
+        "canonical",
+        "있음" if canon else "확인 필요",
+        canon.group(1) if canon else "없음",
+    )
+    alts = re.findall(
+        r'<link[^>]*rel="alternate"[^>]*hre[fF]Lang="([^"]+)"[^>]*href="([^"]+)"', html
+    )
+    if alts:
+        detail = ", ".join(f"{code}={url}" for code, url in alts)
+        off_site = [url for _, url in alts if host not in url]
+        if not any(code == "x-default" for code, _ in alts):
+            add("hreflang", "고칠 것", detail + " / x-default 없음")
+        elif off_site:
+            add("hreflang", "고칠 것", detail + " / 다른 주소가 섞여 있음")
+        else:
+            add("hreflang", "통과", detail)
+    else:
+        add("hreflang", "없음", "한 언어 사이트면 필요 없음")
+
     code, _, robots = fetch(base + "/robots.txt")
     sitemap_url = None
     if code != 200:
@@ -111,13 +139,17 @@ def main() -> int:
                 if n.firstChild
             ]
             wrong = [u for u in locs if host not in u]
+            alternates = len(
+                doc.getElementsByTagName("xhtml:link")
+            )  # hreflang alternates per URL
             if wrong:
                 add("사이트맵", "고칠 것", f"다른 주소 {len(wrong)}개 (예: {wrong[0]})")
             else:
                 add(
                     "사이트맵",
                     "통과",
-                    f"{sitemap_url}, {ctype.split(';')[0]}, 주소 {len(locs)}개",
+                    f"{sitemap_url}, {ctype.split(';')[0]}, 주소 {len(locs)}개, "
+                    f"언어 대체 링크 {alternates}개",
                 )
         except (ValueError, xml.parsers.expat.ExpatError) as e:
             add("사이트맵", "고칠 것", f"XML이 올바르지 않음 ({e})")
