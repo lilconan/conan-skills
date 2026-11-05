@@ -6,7 +6,8 @@ lilconan이 여러 프로젝트에서 함께 쓰는 Claude Code 스킬 묶음(�
 
 | 플러그인 | 버전 | 스킬 | 하는 일 |
 |---|---|---|---|
-| `conan-web` | 0.1.0 | `deploy-cloudflare` | 브라우저에서 처리하는 정적 사이트를 GitHub와 Cloudflare Pages로 배포하고 배포 전후를 점검 |
+| `conan-web` | 0.2.0 | `deploy-cloudflare` | 브라우저에서 처리하는 정적 사이트를 GitHub와 Cloudflare Pages로 배포하고 배포 전후를 점검 |
+| | | `setup-analytics` | 배포된 정적 사이트에 구글 애널리틱스 4를 연결(속성 만들기, 개인정보 맞춤 설정, 측정 ID 배포, 수집 확인) |
 
 스킬은 `플러그인:스킬` 형태로 불립니다. 예: `conan-web:deploy-cloudflare`. "배포 점검해 줘"처럼 말하면 Claude가 설명을 보고 알아서 고르고, `/conan-web:deploy-cloudflare`로 직접 부를 수도 있습니다.
 

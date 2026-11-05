@@ -1,10 +1,10 @@
 {
   "name": "conan-web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "브라우저에서 처리하는 정적 웹 서비스를 GitHub와 Cloudflare Pages로 출시하고 점검하는 스킬 묶음",
   "author": {
     "name": "lilconan"
   },
   "repository": "https://github.com/lilconan/conan-skills",
-  "keywords": ["cloudflare-pages", "deploy", "static-site", "adsense", "ga4"]
+  "keywords": ["cloudflare-pages", "deploy", "static-site", "adsense", "ga4", "google-analytics"]
 }

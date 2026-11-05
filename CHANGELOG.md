@@ -4,5 +4,6 @@
 
 ## 2026-11-05
 
+- `conan-web` 0.2.0: `setup-analytics` 스킬.
 - 마켓플레이스 `conan-skills` 생성.
 - `conan-web` 0.1.0: `deploy-cloudflare` 스킬.
