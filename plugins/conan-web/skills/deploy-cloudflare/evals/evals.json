@@ -1,0 +1,57 @@
+{
+ "skill_name": "deploy-cloudflare",
+ "evals": [
+  {
+   "id": 1,
+   "prompt": "pixelup 이제 cloudflare에 올릴 건데 배포 전에 빠진 거 없는지 점검해줘. 프로젝트는 ~/image_upscale 이야",
+   "expected_output": "한국어 점검 표. 이미 해결된 동의 기본값·_headers·25MB 분할은 통과로 짧게, localhost는 Cloudflare 변수로 해결됨으로, 실제 남은 일(Cloudflare 연결, 환경 변수 표, ads.txt는 승인 후)을 사용자 할 일로 정리",
+   "files": [],
+   "assertions": [
+    "답변이 한국어로 쓰였다",
+    "동의 기본값을 고칠 것으로 지적하지 않는다(이미 GA·애드센스 어느 쪽만 켜도 적용됨)",
+    "_headers와 버전 붙은 캐시 경로가 이미 있다고 인식한다",
+    "사이트맵·robots의 localhost를 Cloudflare에 NEXT_PUBLIC_SITE_URL을 넣으면 해결되는 것으로 설명한다",
+    "사용자가 직접 할 일(Cloudflare 연결, 환경 변수 입력)을 따로 구분해 정리한다",
+    "점검 결과를 항목별 상태가 있는 표로 보여 준다",
+    "프로젝트 파일을 바꾸지 않았다(git status 깨끗)",
+    "NODE_VERSION 20을 22 이상으로 바꾸라고 지적한다",
+    "문의 이메일·운영자 이름의 자리표시자 기본값이 공개될 위험을 고칠 것으로 지적한다",
+    "동의 기본값이 유럽 밖(한국)에서도 광고 쿠키·맞춤 광고를 끈다는 점을 확인 필요로 묻는다"
+   ]
+  },
+  {
+   "id": 2,
+   "prompt": "songtobars(~/Documents/visual) 애드센스 신청하기 전에 배포 상태랑 애드센스 준비 점검 좀 해줘. 고칠 거 있으면 목록으로",
+   "expected_output": "Astro 기준 점검. 동의 기본값이 GA 블록 안에만 있는 문제, ads.txt 없음, _headers 없음, 연락처 이메일 비어 있음 등을 고칠 것으로 지적. 한국어",
+   "files": [],
+   "assertions": [
+    "답변이 한국어로 쓰였다",
+    "동의 기본값이 GA 블록 안에만 있어 애드센스만 켜면 적용되지 않는 문제를 지적한다",
+    "ads.txt가 없다는 점을 지적한다",
+    "_headers(캐시 헤더)가 없다는 점을 언급한다",
+    "문의 이메일이 비어 있다는 점을 지적한다",
+    "고칠 것을 우선순위가 있는 목록으로 정리한다",
+    "프로젝트 파일을 바꾸지 않았다(git status 깨끗)",
+    "pages.dev 대신 자기 도메인이 필요할 수 있다고 지적한다",
+    "폰트·라이브러리(Mediabunny, Inter 등)의 오픈소스 고지가 없다는 점을 지적한다"
+   ]
+  },
+  {
+   "id": 3,
+   "prompt": "새로 만든 tone-mixer라는 사이트 처음으로 배포하고 싶어. 폴더는 <fixture>/tone-mixer 고 빌드 결과는 dist에 있어. 어떻게 하면 돼? 깃헙에도 아직 안 올렸어",
+   "expected_output": "30MB 파일이 25MiB 한도를 넘는다는 지적과 분할 방법, robots.txt·정책 페이지 없음, 사이트맵 localhost, GitHub 비공개 저장소 생성은 승인 후, Cloudflare 빌드 설정 표(dist), 사용자가 직접 할 일 구분. 한국어",
+   "files": [],
+   "assertions": [
+    "답변이 한국어로 쓰였다",
+    "30MB 모델 파일이 Cloudflare Pages 파일당 25MiB 한도를 넘는다고 지적하고 해결 방법을 제시한다",
+    "사이트맵의 localhost 주소를 지적한다",
+    "robots.txt와 정책 페이지(개인정보처리방침 등)가 없다는 점을 지적한다",
+    "GitHub 저장소를 비공개로 만들 것을 권하고, 만들거나 push하지 않고 승인을 구한다",
+    "Cloudflare 빌드 설정(Build command, output dist)을 표나 목록으로 안내한다",
+    "사용자가 직접 할 일(가입·로그인·대시보드)을 따로 구분한다",
+    "dist에만 있는 파일(모델·사이트맵)이 public에 없어 Cloudflare 빌드에서 사라진다고 지적한다",
+    "G-TEST123 같은 자리표시자 측정 ID를 지적한다"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "conan-skills",
+  "description": "lilconan이 여러 프로젝트에서 함께 쓰는 Claude Code 스킬 묶음",
+  "owner": {
+    "name": "lilconan"
+  },
+  "plugins": [
+    {
+      "name": "conan-web",
+      "description": "브라우저에서 처리하는 정적 웹 서비스를 GitHub와 Cloudflare Pages로 출시하고 점검하는 스킬 묶음",
+      "version": "0.1.0",
+      "author": {
+        "name": "lilconan"
+      },
+      "source": "./plugins/conan-web",
+      "category": "development"
+    }
+  ]
+}
