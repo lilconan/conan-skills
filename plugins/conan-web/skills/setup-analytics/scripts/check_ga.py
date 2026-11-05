@@ -6,7 +6,9 @@ Usage: check_ga.py https://example.pages.dev --id G-XXXXXXXXXX [--path /about --
 Prints a Markdown table (Korean) and exits 1 when the tag is missing or misplaced.
 Only sends GET requests.
 """
+
 import argparse
+import http.client
 import re
 import sys
 import urllib.request
@@ -16,7 +18,9 @@ SCRIPT_SRC = r"<script[^>]*\ssrc=[\"'][^\"']*{0}|\\\\?\"src\\\\?\":\\\\?\"[^\"\\
 
 
 def fetch(url: str) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Cache-Control": "no-cache"})
+    req = urllib.request.Request(
+        url, headers={"User-Agent": UA, "Cache-Control": "no-cache"}
+    )
     with urllib.request.urlopen(req, timeout=20) as res:
         return res.read().decode("utf-8", errors="replace")
 
@@ -30,7 +34,9 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("site")
     p.add_argument("--id", required=True, help="expected measurement id, e.g. G-ABC123")
-    p.add_argument("--path", action="append", default=[], help="extra paths to check (default: /)")
+    p.add_argument(
+        "--path", action="append", default=[], help="extra paths to check (default: /)"
+    )
     args = p.parse_args()
     base = args.site.rstrip("/")
     paths = ["/"] + [x if x.startswith("/") else "/" + x for x in args.path]
@@ -41,7 +47,7 @@ def main() -> int:
     for path in paths:
         try:
             html = fetch(base + path)
-        except Exception as e:  # noqa: BLE001 - report any fetch problem as a row
+        except (OSError, ValueError, http.client.HTTPException) as e:
             print(f"| {path} | - | - | - | - | 고칠 것: 열 수 없음 ({e}) |")
             fail = True
             continue

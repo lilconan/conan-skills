@@ -4,6 +4,7 @@
 
 ## 2026-11-05
 
+- `conan-web` 0.4.1: 검사 스크립트 ruff 정리.
 - `conan-web` 0.4.0: setup-analytics에 이벤트 설계 단계.
 - `conan-web` 0.3.0: `register-search` 스킬, setup-analytics에 Web Analytics·UTM 추가.
 - `conan-web` 0.2.1: setup-analytics 데이터 보관 순서 보완.

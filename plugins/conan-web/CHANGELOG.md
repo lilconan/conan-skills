@@ -1,5 +1,9 @@
 # conan-web 변경 기록
 
+## 0.4.1 (2026-11-05)
+
+- 검사 스크립트 3개(`check_output.py`, `check_ga.py`, `check_search.py`)를 ruff 기본 규칙과 서식에 맞춤. 넓은 `except Exception` 대신 네트워크·XML 오류만 잡도록 바꾸고 실행 권한을 줌. 동작은 같음.
+
 ## 0.4.0 (2026-11-05)
 
 - `setup-analytics` 0.3.0: 이벤트 설계 단계(`references/event-design.md`) 추가.
