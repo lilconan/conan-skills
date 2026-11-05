@@ -1,5 +1,11 @@
 # conan-web 변경 기록
 
+## 0.4.0 (2026-11-05)
+
+- `setup-analytics` 0.3.0: 이벤트 설계 단계(`references/event-design.md`) 추가.
+  - 근거: PixelUp에 사용자 행동 이벤트 11가지(tool_ready, image_rejected, upscale_cancel, backend_fallback, batch_action, result_compare, sample_compare, leave_warning, session_summary 등)를 넣고 GA에 맞춤 측정기준 12개·측정항목 4개를 등록한 과정.
+  - 질문에서 이벤트를 고르는 방법, 개인정보 규칙(구간·분류 코드), GA 화면의 함정(이름에 `·` 불가, Esc로 창이 닫힘, 주요 이벤트는 데이터가 들어온 뒤), gtag를 가로채는 시험 방법.
+
 ## 0.3.0 (2026-11-05)
 
 - `register-search` 스킬 추가: 구글 서치 콘솔(URL 접두어, HTML 태그), 네이버 서치어드바이저(사용자가 직접, Claude in Chrome은 네이버를 못 엶), Bing(서치 콘솔에서 가져오기) 등록과 사이트맵 제출.
