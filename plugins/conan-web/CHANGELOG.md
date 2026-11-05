@@ -1,5 +1,14 @@
 # conan-web 변경 기록
 
+## 0.3.0 (2026-11-05)
+
+- `register-search` 스킬 추가: 구글 서치 콘솔(URL 접두어, HTML 태그), 네이버 서치어드바이저(사용자가 직접, Claude in Chrome은 네이버를 못 엶), Bing(서치 콘솔에서 가져오기) 등록과 사이트맵 제출.
+  - 근거: SongToBars에서 하고 PixelUp에서 빠져 있던 작업을 PixelUp에 적용한 과정.
+  - 인증 값은 `meta name → content` 지도 하나로 관리(Next.js metadata, Astro 레이아웃, Vite 훅 예시).
+  - 확인 스크립트 `scripts/check_search.py`(인증 태그, robots, 사이트맵, 크롤러 접근).
+  - 평가(시험 2건): 스킬 사용 100%, 미사용 93%. 미사용 쪽이 짚은 크롤러 접근 확인, 색인 생성 요청, Bing 자체 인증 백업을 반영. Astro 사이트맵 경로(`sitemap-index.xml`) 안내도 고침.
+- `setup-analytics` 0.2.0: Cloudflare Web Analytics 켜기(Metrics 탭, 개인정보처리방침 문구)와 홍보용 UTM 링크 표(템플릿 추가).
+
 ## 0.2.1 (2026-11-05)
 
 - `setup-analytics`: GA 데이터 보관 화면 주소와 순서를 PixelUp에서 실제로 바꿔 보며 확인해 고침(이벤트 데이터만 기본 2개월, 저장 후 다시 불러와 확인).

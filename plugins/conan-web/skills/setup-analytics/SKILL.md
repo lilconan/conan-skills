@@ -1,8 +1,8 @@
 ---
 name: setup-analytics
-description: 배포된 정적 웹사이트(Next.js 정적 내보내기, Astro, Vite 등을 Cloudflare Pages에 올린 사이트)에 구글 애널리틱스 4(GA4)를 연결하는 스킬. 코드가 측정 ID를 받을 준비가 됐는지와 동의 기본값을 점검하고, Claude in Chrome으로 올바른 구글 계정에서 GA 속성과 웹 스트림을 만들고, 개인정보처리방침에 맞게 향상된 측정을 조정하고, 측정 ID를 Cloudflare 환경 변수에 넣어 다시 배포한 뒤, 실제 사이트와 GA 실시간 보고서로 수집을 확인한다. 사용자가 "GA 붙여 줘", "구글 애널리틱스 연결", "측정 ID", "G-로 시작하는 ID", "방문자 통계 보고 싶어", "GA4 설정", "애널리틱스 안 붙었지?"라고 하거나, 배포한 사이트에 분석을 켜려 할 때, GA에 데이터가 안 들어온다고 할 때는 직접 언급하지 않아도 반드시 이 스킬을 쓴다.
+description: 배포된 정적 웹사이트(Next.js 정적 내보내기, Astro, Vite 등을 Cloudflare Pages에 올린 사이트)에 구글 애널리틱스 4(GA4)와 Cloudflare Web Analytics를 연결하고 홍보용 UTM 링크 표를 만드는 스킬. 코드가 측정 ID를 받을 준비가 됐는지와 동의 기본값을 점검하고, Claude in Chrome으로 올바른 구글 계정에서 GA 속성과 웹 스트림을 만들고, 개인정보처리방침에 맞게 향상된 측정을 조정하고, 측정 ID를 Cloudflare 환경 변수에 넣어 다시 배포한 뒤, 실제 사이트와 GA 실시간 보고서로 수집을 확인한다. 사용자가 "GA 붙여 줘", "구글 애널리틱스 연결", "측정 ID", "G-로 시작하는 ID", "방문자 통계 보고 싶어", "GA4 설정", "애널리틱스 안 붙었지?", "Web Analytics", "UTM", "홍보 링크", "유입 경로"라고 하거나, 배포한 사이트에 분석을 켜려 할 때, GA에 데이터가 안 들어온다고 할 때는 직접 언급하지 않아도 반드시 이 스킬을 쓴다.
 metadata:
-  version: 0.1.1
+  version: 0.2.0
   updated: 2026-11-05
 ---
 
@@ -68,7 +68,23 @@ GA를 만들기 전에, 사이트가 측정 ID를 받으면 제대로 동작하�
 3. 향상된 측정 설정은 GA 화면(스트림 → 향상된 측정 톱니바퀴)에서만 확인한다. 공개 태그 파일(`gtag/js?id=…`) 안의 `vtp_enableDownload`, `vtp_enableForm` 같은 값은 화면에서 끈 뒤에도 `true`로 나와서 실제 설정을 나타내지 않는다(2026-11 PixelUp에서 확인).
 4. 실시간에 안 보이면: 광고 차단 확장, 측정 ID 오타(0과 O), 배포 전 페이지, 동의 기본값으로 분석 쿠키가 막힌 지역(EEA 등)인지 순서대로 확인한다.
 
-## 4. 기록과 보고
+## 4. Cloudflare Web Analytics (함께 켜기)
+
+GA와 별도로, Cloudflare가 제공하는 쿠키 없는 방문 통계다. 광고 차단기에 덜 막히고 페이지 속도(Core Web Vitals)도 보여 줘서 GA와 같이 쓰면 좋다(SongToBars·PixelUp 모두 켬).
+
+1. Cloudflare 대시보드 → Workers & Pages → 프로젝트 → **Metrics** 탭 → 아래쪽 **Web Analytics → Enable**. "Changes will take effect on the next deployment"이므로 다음 배포부터 Cloudflare가 페이지에 비콘(`static.cloudflareinsights.com/beacon.min.js`)을 자동으로 넣는다. 코드 수정은 필요 없다.
+2. 개인정보처리방침에 적는다: 처리 항목 표(방문한 페이지, 유입 경로, 브라우저·기기 종류, 국가, 페이지 로딩 속도, 목적, 보관은 Cloudflare 정책), 위탁 표의 Cloudflare 행(방문 통계 추가), 쿠키·통계 항(쿠키를 저장하지 않고 사이트 간 추적을 하지 않는다는 문장). 공개 후 방침을 바꾸면 방침에 적은 사전 고지 규칙이 있는지 확인한다.
+3. 다음 배포 뒤 `curl -s https://<site>/ | grep -o cloudflareinsights`로 비콘이 들어갔는지 확인한다. 통계는 프로젝트의 Web Analytics 화면에서 본다.
+
+## 5. 홍보 링크용 UTM 표
+
+홍보 글·영상 설명란에 넣을 링크마다 `utm_source`·`utm_medium`·`utm_campaign`(필요하면 `utm_content`)을 붙여야 GA4 "트래픽 획득"에서 채널별로 나뉜다. 프로젝트에 `docs/marketing/utm-links.md`가 없으면 [references/utm-links-template.md](references/utm-links-template.md)로 만든다.
+
+- 채널은 그 서비스의 실제 사용자가 모이는 곳으로 고른다(한국어 사이트면 네이버 블로그·티스토리·클리앙·루리웹 등, 영어 사이트면 Reddit·Discord 등). 모르겠으면 사용자에게 주요 채널을 묻는다.
+- 채널별 성과는 방문 수보다 핵심 이벤트(예: `upscale_done`, `render_done`) 수로 비교하라고 적는다.
+- 사이트 안 링크에는 UTM을 붙이지 않는다(새 방문으로 잘못 집계됨).
+
+## 6. 기록과 보고
 
 - 프로젝트의 `DEPLOY.md`(없으면 만들지 묻기)에 측정 ID, GA 계정·속성 이름, 향상된 측정에서 끈 항목과 이유, 확인 날짜를 적는다. 다음에 다시 조사하지 않게 하려는 것이다.
 - 개인정보처리방침에 Google Analytics가 위탁·수집 항목으로 적혀 있는지 확인한다. 없으면 고칠 것으로 보고한다.

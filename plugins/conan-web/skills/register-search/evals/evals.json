@@ -1,0 +1,35 @@
+{
+ "skill_name": "register-search",
+ "evals": [
+  {
+   "id": 1,
+   "prompt": "songtobars(~/Documents/visual, https://songtobars.pages.dev) 구글이랑 네이버, 빙 검색 등록 제대로 돼 있는지 점검해줘",
+   "expected_output": "실제 사이트에서 구글·네이버 인증 태그와 robots·sitemap-index 확인(통과), Bing은 서치 콘솔 가져오기면 태그 불필요, 도메인 이전 시 재인증 필요, 콘솔 화면 상태는 브라우저로 확인해야 함. 한국어",
+   "files": [],
+   "assertions": [
+    "답변이 한국어로 쓰였다",
+    "실제 사이트에서 구글·네이버 인증 태그가 있는지 확인했다",
+    "robots.txt와 사이트맵(sitemap-index.xml)이 실제 주소로 나오는지 확인했다",
+    "Bing은 서치 콘솔 가져오기면 별도 인증 태그가 필요 없다고 설명했다",
+    "인증이 주소 단위라 도메인을 옮기면 다시 인증해야 한다고 짚었다",
+    "콘솔(서치 콘솔·서치어드바이저·Bing) 안의 상태는 직접 확인이 필요하다고 구분했다",
+    "프로젝트 파일을 바꾸지 않았다"
+   ]
+  },
+  {
+   "id": 2,
+   "prompt": "tone-mixer(/Users/conanconan/conan-skills/plugins/conan-web/skills/deploy-cloudflare-workspace/fixtures/tone-mixer, Vite)를 tone-mixer.pages.dev로 배포했다고 치고, 구글이랑 네이버 검색에 나오게 하고 싶어. 뭐부터 하면 돼?",
+   "expected_output": "사이트맵 localhost·robots 없음부터 고치기, 서치 콘솔은 URL 접두어(도메인 속성 불가), HTML 태그 인증 값을 Vite에 넣는 방법, 네이버는 사용자가 직접(값 받기), 배포 후 소유 확인·사이트맵 제출, Bing은 서치 콘솔 가져오기(권한 허용은 승인 후). 한국어",
+   "files": [],
+   "assertions": [
+    "답변이 한국어로 쓰였다",
+    "사이트맵의 localhost 주소와 robots.txt 없음을 먼저 고치라고 짚었다",
+    "서치 콘솔은 URL 접두어 속성으로 등록해야 한다(pages.dev는 도메인 속성 불가)고 안내했다",
+    "HTML 태그 인증 값을 Vite 사이트에 넣는 구체적 방법을 안내했다",
+    "네이버 서치어드바이저 단계와 인증 값 받는 방법을 안내했다",
+    "배포한 뒤에 소유 확인과 사이트맵 제출을 하라는 순서를 지켰다",
+    "Bing은 서치 콘솔에서 가져오는 방법과 권한 허용 확인을 안내했다"
+   ]
+  }
+ ]
+}
