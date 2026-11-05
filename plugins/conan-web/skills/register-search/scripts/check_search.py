@@ -35,6 +35,8 @@ def fetch(url: str):
             )
     except urllib.error.HTTPError as e:
         return e.code, e.headers.get("content-type", ""), ""
+    except (OSError, http.client.HTTPException) as e:  # DNS, refused, timeout
+        return f"연결 실패: {e}", "", ""
 
 
 def main() -> int:

@@ -1,5 +1,11 @@
 # conan-web 변경 기록
 
+## 0.4.2 (2026-11-05)
+
+- `register-search` 0.1.1: `check_search.py`가 DNS 실패·연결 거부·타임아웃에서 멈추지 않고 표에 "연결 실패"로 적음.
+- `setup-analytics` 0.3.1: 이벤트 설계 규칙 3가지 추가(깔때기 단계 이벤트는 실제로 추가됐을 때만, 페이지를 떠나며 하는 정리는 사용자 취소로 세지 않음, bfcache 복원 시 방문 요약 초기화).
+  - 근거: PixelUp 전체 코드 리뷰에서 add_images가 전부 거부된 시도에도 전송되고, 페이지 이동 때 대기 작업마다 upscale_cancel이 찍히던 문제.
+
 ## 0.4.1 (2026-11-05)
 
 - 검사 스크립트 3개(`check_output.py`, `check_ga.py`, `check_search.py`)를 ruff 기본 규칙과 서식에 맞춤. 넓은 `except Exception` 대신 네트워크·XML 오류만 잡도록 바꾸고 실행 권한을 줌. 동작은 같음.

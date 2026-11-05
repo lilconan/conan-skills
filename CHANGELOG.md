@@ -4,6 +4,7 @@
 
 ## 2026-11-05
 
+- `conan-web` 0.4.2: check_search.py 연결 오류 처리, 이벤트 설계 규칙 보완.
 - `conan-web` 0.4.1: 검사 스크립트 ruff 정리.
 - `conan-web` 0.4.0: setup-analytics에 이벤트 설계 단계.
 - `conan-web` 0.3.0: `register-search` 스킬, setup-analytics에 Web Analytics·UTM 추가.
