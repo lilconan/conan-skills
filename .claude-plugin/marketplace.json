@@ -15,6 +15,16 @@
       },
       "source": "./plugins/conan-web",
       "category": "development"
+    },
+    {
+      "name": "conan-writing",
+      "description": "제목·소제목·한 줄 메시지처럼 짧은 문구를 목적이 담긴 한 줄로 다듬는 스킬 묶음",
+      "version": "0.1.0",
+      "author": {
+        "name": "lilconan"
+      },
+      "source": "./plugins/conan-writing",
+      "category": "productivity"
     }
   ]
 }

@@ -2,6 +2,10 @@
 
 플러그인별 자세한 기록은 `plugins/<플러그인>/CHANGELOG.md`에 있습니다.
 
+## 2026-11-16
+
+- `conan-writing` 0.1.0: `distill-headline` 스킬(목적이 담긴 한 줄 만들기).
+
 ## 2026-11-06
 
 - `conan-web` 0.5.0: 다국어 사이트 점검(deploy-cloudflare `references/i18n.md`, check_search.py의 lang·hreflang 검사).
