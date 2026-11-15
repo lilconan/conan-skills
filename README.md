@@ -9,7 +9,7 @@ lilconan이 여러 프로젝트에서 함께 쓰는 Claude Code 스킬 묶음(�
 | `conan-web` | 0.5.0 | `deploy-cloudflare` | 브라우저에서 처리하는 정적 사이트를 GitHub와 Cloudflare Pages로 배포하고 배포 전후를 점검 |
 | | | `setup-analytics` | 배포된 정적 사이트에 구글 애널리틱스 4와 Cloudflare Web Analytics를 연결하고, 사용자 행동 이벤트를 설계하고, 홍보용 UTM 링크 표를 만듦 |
 | | | `register-search` | 구글 서치 콘솔·네이버 서치어드바이저·Bing에 사이트를 등록하고 사이트맵 제출 |
-| `conan-writing` | 0.1.0 | `distill-headline` | 제목·소제목·한 줄 메시지를 "왜 했는가(목적)"가 담긴 짧은 한 줄로 다듬음 |
+| `conan-writing` | 0.3.0 | `distill-headline` | 제목·소제목·한 줄 메시지를 "왜 했는가(목적)"가 담긴 짧은 한 줄로 다듬음 |
 
 스킬은 `플러그인:스킬` 형태로 불립니다. 예: `conan-web:deploy-cloudflare`. "배포 점검해 줘"처럼 말하면 Claude가 설명을 보고 알아서 고르고, `/conan-web:deploy-cloudflare`로 직접 부를 수도 있습니다.
 

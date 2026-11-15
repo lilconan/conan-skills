@@ -4,6 +4,8 @@
 
 ## 2026-11-16
 
+- `conan-writing` 0.3.0: distill-headline에 카드 제목·라벨 단어형 끝맺음 규칙.
+- `conan-writing` 0.2.0: distill-headline에 문서 말투 통일 단계와 전체 검수 절차.
 - `conan-writing` 0.1.0: `distill-headline` 스킬(목적이 담긴 한 줄 만들기).
 
 ## 2026-11-06
