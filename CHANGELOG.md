@@ -4,6 +4,7 @@
 
 ## 2026-11-16
 
+- `conan-writing` 0.4.0: `unify-copy` 스킬(문서 말투 통일), distill-headline 6단계 이관.
 - `conan-writing` 0.3.1: distill-headline 최고 위계 제목 말투 예외.
 - `conan-writing` 0.3.0: distill-headline에 카드 제목·라벨 단어형 끝맺음 규칙.
 - `conan-writing` 0.2.0: distill-headline에 문서 말투 통일 단계와 전체 검수 절차.

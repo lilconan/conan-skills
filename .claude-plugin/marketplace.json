@@ -18,8 +18,8 @@
     },
     {
       "name": "conan-writing",
-      "description": "제목·소제목·한 줄 메시지처럼 짧은 문구를 목적이 담긴 한 줄로 다듬는 스킬 묶음",
-      "version": "0.3.1",
+      "description": "제목을 목적이 담긴 한 줄로 다듬고, 문서 전체의 말투를 하나로 맞추는 글쓰기 스킬 묶음",
+      "version": "0.4.0",
       "author": {
         "name": "lilconan"
       },
