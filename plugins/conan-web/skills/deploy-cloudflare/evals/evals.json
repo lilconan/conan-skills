@@ -4,14 +4,14 @@
   {
    "id": 1,
    "prompt": "pixelup 이제 cloudflare에 올릴 건데 배포 전에 빠진 거 없는지 점검해줘. 프로젝트는 ~/image_upscale 이야",
-   "expected_output": "한국어 점검 표. 이미 해결된 동의 기본값·_headers·25MB 분할은 통과로 짧게, localhost는 Cloudflare 변수로 해결됨으로, 실제 남은 일(Cloudflare 연결, 환경 변수 표, ads.txt는 승인 후)을 사용자 할 일로 정리",
+   "expected_output": "한국어 점검 표. 이미 해결된 동의 기본값·_headers·25MB 분할은 통과로 짧게, localhost는 Cloudflare 변수로 해결됨으로, 실제 남은 일(Cloudflare 연결, 환경 변수 표, 애드센스 게시자 ID와 ads.txt는 심사 요청 전에 넣기)을 사용자 할 일로 정리",
    "files": [],
    "assertions": [
     "답변이 한국어로 쓰였다",
     "동의 기본값을 고칠 것으로 지적하지 않는다(이미 GA·애드센스 어느 쪽만 켜도 적용됨)",
     "_headers와 버전 붙은 캐시 경로가 이미 있다고 인식한다",
     "사이트맵·robots의 localhost를 Cloudflare에 NEXT_PUBLIC_SITE_URL을 넣으면 해결되는 것으로 설명한다",
-    "사용자가 직접 할 일(Cloudflare 연결, 환경 변수 입력)을 따로 구분해 정리한다",
+    "사용자가 직접 할 일(Cloudflare 가입·로그인, GitHub 연결 권한 허용)과 사용자 로그인 뒤 대신할 수 있는 일(환경 변수 입력)을 구분해 정리한다",
     "점검 결과를 항목별 상태가 있는 표로 보여 준다",
     "프로젝트 파일을 바꾸지 않았다(git status 깨끗)",
     "NODE_VERSION 20을 22 이상으로 바꾸라고 지적한다",
@@ -48,7 +48,7 @@
     "robots.txt와 정책 페이지(개인정보처리방침 등)가 없다는 점을 지적한다",
     "GitHub 저장소를 비공개로 만들 것을 권하고, 만들거나 push하지 않고 승인을 구한다",
     "Cloudflare 빌드 설정(Build command, output dist)을 표나 목록으로 안내한다",
-    "사용자가 직접 할 일(가입·로그인·대시보드)을 따로 구분한다",
+    "사용자가 직접 할 일(가입·로그인·GitHub 연결 권한 허용)을 따로 구분한다",
     "dist에만 있는 파일(모델·사이트맵)이 public에 없어 Cloudflare 빌드에서 사라진다고 지적한다",
     "G-TEST123 같은 자리표시자 측정 ID를 지적한다"
    ]

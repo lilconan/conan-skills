@@ -2,6 +2,10 @@
 
 플러그인별 자세한 기록은 `plugins/<플러그인>/CHANGELOG.md`에 있습니다.
 
+## 2026-11-20
+
+- `conan-web` 0.6.0: 11월 6일~20일 PixelUp·SongToBars 작업에서 나온 교훈 반영(세 스킬 모두). IndexNow 제출 스크립트, check_output.py 제목·공유 메타·아이콘·내부 링크 검사, check_ga.py 지역 밖 동의 기본값 검사, check_search.py hreflang 대소문자 버그 수정.
+
 ## 2026-11-16
 
 - `conan-writing` 0.4.1: unify-copy 조사 받침 규칙과 재검사.

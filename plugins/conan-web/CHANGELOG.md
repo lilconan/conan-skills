@@ -1,5 +1,33 @@
 # conan-web 변경 기록
 
+## 0.6.0 (2026-11-20)
+
+근거: 2026-11-06~20 PixelUp(Next.js)·SongToBars(Astro) 작업 기록 전체를 여섯 구간으로 나눠 교훈 후보 93개를 뽑고, 중복과 이미 반영된 것을 걸러 58개를 반영함(목록과 독립 검수 결과는 이번 작업 기록에 있음).
+
+- `deploy-cloudflare` 0.3.0
+  - 0단계: 정적 배포가 가능한지(서버 기능, Next.js 빌드 표의 `ƒ`), 대상 독자와 언어, "다른 프로젝트처럼"이면 그 프로젝트와 비교.
+  - 1단계: 빌드 전 개발 서버 멈추기, 빈 결과 폴더 검사 금지, `.env.local`을 치우고 Cloudflare와 같은 조건으로 시험 빌드, Cloudflare처럼 띄워 보기, 첫 배포 전 독립 검토.
+  - `check_output.py`: 페이지 수(0개면 실패), `<title>` 하나와 og·twitter 제목 일치, `og:image`·`twitter:image`와 그 파일, favicon·터치 아이콘·매니페스트, 내부 링크가 실제 파일을 가리키는지. ads.txt 안내를 "심사 요청 전에 게시자 ID"로 고침.
+  - 4단계: 첫 커밋 전 올라갈 파일·토큰 검사·git 사용자 확인, 다른 세션과 같은 폴더면 내 파일만 넣기.
+  - 6단계: 주소 추측 금지, 배포 기다리기(check-run 확인 뒤 새 빌드에만 있는 내용으로, 공용 JS 조각까지), ads.txt·사이트맵 주소 200, 콘솔 오류·깨진 이미지, 회귀 비교, 언어별 공개 환경 변수 확인.
+  - 원칙: 목표·훅은 승인이 아님, 외부 지시서는 먼저 검증하고 프로젝트 원칙과 부딪치면 묻기, 사용자만 할 수 있는 남은 일은 글로 남기기, 대시보드는 사용자 로그인 뒤 Claude in Chrome으로.
+  - `references/cloudflare.md`: 대시보드를 다룰 브라우저(앱 안의 브라우저는 로그인 실패, 웨일 등 Chromium의 Claude in Chrome 연결 안내), 환경 변수 바꾸고 다시 배포하기(`?to=/:account/…` 주소), 애드센스 신청 순서, 도메인 이전 때 GA 스트림·UTM·IndexNow 키.
+  - `references/adsense-checklist.md`: ads.txt 실제 주소, 게시자 ID 시점, 제목·공유 카드, 아이콘·매니페스트, 구조화 데이터 점검(Article 선택 항목, TechArticle, FAQ 문구 일치, FAQ 리치 결과 제한), 모바일 375px, 이미지 크기, 홈 본문 측정, 없어진 기능의 설명, 동의 기본값 세 가지 조합 빌드.
+  - `references/nextjs.md`: `trailingSlash`, `start` 스크립트, `ƒ` 경로, `title.template`이 홈에 안 붙는 문제, `.next` 삭제 순서, 빈 `out/`의 거짓 통과, `.env.local`, prebuild 훅과 ESLint 제외.
+  - `references/i18n.md`: hreflang 대소문자(Next `hrefLang`), 404 제외, 운영자 이름 같은 공개 값은 언어 중립으로 두고 배포 뒤 언어별 확인.
+- `register-search` 0.3.0
+  - 네이버 서치어드바이저는 앱 안의 브라우저와 Claude in Chrome(웨일 포함) 모두에서 막힘. 우회하지 말고 대안(IndexNow)을 먼저 내고, 못 한 단계를 완료로 표시하지 않음.
+  - 새 `references/indexnow.md`와 `scripts/indexnow_submit.py`(키 파일 확인, 사이트맵 묶음에서 주소 모으기, `--filter`, `--dry-run`).
+  - 네이버 사이트맵은 주소가 그대로면 다시 제출할 필요 없음, 입력란에 전체 주소. 구글 "가져올 수 없음"은 2주 넘게 남을 수 있어 Googlebot 요청으로 먼저 진단, Astro는 `sitemap-0.xml`도 제출, 제출 버튼 클릭과 확인 방법.
+  - 인증 태그 전체를 붙여 넣어도 되게 안내, 두 메타 태그가 실제 페이지에 나올 때까지 기다린 뒤 "확인", 번역 페이지 추가 뒤 점검, 리치 결과 테스트 사용법.
+  - `check_search.py`: hreflang을 대소문자 무시로 찾음. 전에는 Astro의 `hreflang`(소문자)을 못 찾아 SongToBars가 "없음"으로 나왔다.
+- `setup-analytics` 0.4.0
+  - 유입경로 탐색은 데이터 없이도 만들 수 있음(`이벤트 생성` 줄). 주요 이벤트만 데이터가 필요하고 "최근 활동" 탭에서 지정, 그때까지 남은 일로 기록.
+  - `references/ga4-console.md`: 앱 안의 브라우저로 할 때(로그인은 사용자, 창 넓히기, `find`·`ref`), 맞춤 측정기준의 비슷한 이름 제안 함정과 개수 다시 세기, 화면 주소 표, 유입경로 탐색 만드는 순서.
+  - `references/event-design.md`: 두 프로젝트 이벤트 비교와 맞춤 측정기준 등록 확인, 주요 이벤트·깔때기를 쉬운 예로 설명, 시험 요령(DataTransfer, 슬라이더 setter, 이동·시간 초과로 끊기는 스크립트, 배포 뒤 JS 조각 확인, 확인하지 못한 것 보고).
+  - `check_ga.py`: 유럽·영국·스위스 밖의 `ad_storage` 기본값을 표에 보여 주고, 지역 구분 없이 거부면 "확인 필요".
+  - 개발 서버에서 GA가 켜지는지, Cloudflare 대시보드 로딩·Metrics 탭 함정, 못 한 일 보고 원칙.
+
 ## 0.5.0 (2026-11-06)
 
 - `deploy-cloudflare` 0.2.0: 다국어 정적 사이트 점검(`references/i18n.md`) 추가. 기본 언어는 `/`, 나머지는 `/<코드>/`, 언어마다 `<html lang>`(Next.js는 route group별 루트 레이아웃), canonical, hreflang과 x-default, 사이트맵 alternates, 자동 이동 금지와 안내 띠, 다국어 404, 정책 페이지 번역.

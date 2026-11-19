@@ -3,11 +3,14 @@
 
 Usage: check_output.py <out-or-dist> [--site-url https://example.pages.dev]
 
-Checks file limits, robots/sitemap/ads.txt/_headers/404, localhost URLs and placeholder
-values (fake contact emails, example ids) in published pages.
+Checks file limits, robots/sitemap/ads.txt/_headers/404, localhost URLs, placeholder
+values (fake contact emails, example ids) in published pages, page titles and share
+metadata, home-screen icons, and internal links that point at missing files.
 Prints a Markdown table (Korean) and exits 1 when something must be fixed.
 Only reads files; it never modifies the folder.
 """
+
+from __future__ import annotations
 
 import argparse
 import os
@@ -147,11 +150,21 @@ def main() -> int:
 
     ads = read(os.path.join(root, "ads.txt"))
     if "ads.txt" not in names:
-        add("애드센스", "ads.txt", "확인 필요", "없음. 승인 후 반드시 필요합니다")
+        add(
+            "애드센스",
+            "ads.txt",
+            "확인 필요",
+            "없음. 정적 사이트는 404가 나가므로 주석 한 줄이라도 두고, 게시자 ID는 심사 요청 전에 넣으세요",
+        )
     elif re.search(r"google\.com,\s*pub-\d+", ads):
         add("애드센스", "ads.txt", "통과", ads.strip().splitlines()[0][:80])
     else:
-        add("애드센스", "ads.txt", "확인 필요", "광고 ID 없음(승인 전이면 정상)")
+        add(
+            "애드센스",
+            "ads.txt",
+            "확인 필요",
+            "광고 ID 없음. 애드센스 심사를 요청하기 전에 게시자 ID를 넣고 다시 배포하세요",
+        )
 
     # Placeholder values left in published pages (fake contact, sample ids).
     placeholder = re.compile(
@@ -199,6 +212,149 @@ def main() -> int:
             "_headers",
             "통과",
             "immutable 경로: " + (", ".join(immutable) or "없음"),
+        )
+
+    # Pages: titles, share metadata, internal links.
+    pages = [
+        p
+        for p in names
+        if p.endswith(".html")
+        and not re.search(r"(^|/)(404|_not-found|500)(/index)?\.html$", p)
+        and not re.fullmatch(r"google[0-9a-f]+\.html", p)
+    ]
+    if not pages:
+        add(
+            "페이지",
+            "HTML 페이지",
+            "고칠 것",
+            "0개. 빌드가 실패했거나 다른 폴더를 검사하고 있습니다",
+        )
+    else:
+        add("페이지", "HTML 페이지", "통과", f"{len(pages)}개")
+
+    def meta(html: str, key: str) -> str | None:
+        m = re.search(
+            r"<meta[^>]+(?:property|name)=\""
+            + re.escape(key)
+            + r"\"[^>]*content=\"([^\"]*)\"",
+            html,
+        ) or re.search(
+            r"<meta[^>]+content=\"([^\"]*)\"[^>]*(?:property|name)=\""
+            + re.escape(key)
+            + r"\"",
+            html,
+        )
+        return m.group(1) if m else None
+
+    bad_title, title_mismatch, no_og_image, no_tw_image, missing_image = (
+        [],
+        [],
+        [],
+        [],
+        set(),
+    )
+    links = {}  # internal path -> first page that links to it
+    for page in sorted(pages):
+        html = read(os.path.join(root, page))
+        titles = re.findall(r"<title[^>]*>([^<]*)</title>", html)
+        if len(titles) != 1 or not titles[0].strip():
+            bad_title.append(page)
+        else:
+            title = titles[0].strip()
+            for key in ("og:title", "twitter:title"):
+                value = meta(html, key)
+                if value is not None and value.strip() != title:
+                    title_mismatch.append(f"{page} {key}")
+        og_image = meta(html, "og:image")
+        if not og_image:
+            no_og_image.append(page)
+        else:
+            path = re.sub(r"^https?://[^/]+", "", og_image).split("?")[0].lstrip("/")
+            if path and path not in names:
+                missing_image.add(path)
+        if not meta(html, "twitter:image"):
+            no_tw_image.append(page)
+        for href in re.findall(r"\shref=\"(/[^\"#?]*)", html):
+            if href.startswith(("//", "/cdn-cgi/")):
+                continue
+            links.setdefault(href, page)
+
+    def sample(items: list[str]) -> str:
+        return ", ".join(items[:3]) + (
+            f" 외 {len(items) - 3}개" if len(items) > 3 else ""
+        )
+
+    if pages:
+        add(
+            "메타",
+            "<title>",
+            "고칠 것" if bad_title else "통과",
+            f"없거나 여러 개: {sample(bad_title)}"
+            if bad_title
+            else "모든 페이지에 하나씩",
+        )
+        add(
+            "메타",
+            "og·twitter 제목",
+            "확인 필요" if title_mismatch else "통과",
+            f"<title>과 다름: {sample(title_mismatch)}"
+            if title_mismatch
+            else "<title>과 같음",
+        )
+        if no_og_image or no_tw_image or missing_image:
+            parts = []
+            if no_og_image:
+                parts.append(
+                    f"og:image 없음 {len(no_og_image)}개(예: {no_og_image[0]})"
+                )
+            if no_tw_image:
+                parts.append(
+                    f"twitter:image 없음 {len(no_tw_image)}개(예: {no_tw_image[0]})"
+                )
+            if missing_image:
+                parts.append("가리키는 파일 없음: " + ", ".join(sorted(missing_image)))
+            add(
+                "메타",
+                "공유 이미지",
+                "고칠 것" if missing_image else "확인 필요",
+                "; ".join(parts),
+            )
+        else:
+            add("메타", "공유 이미지", "통과", "모든 페이지에 og:image·twitter:image")
+
+    icons = {
+        "favicon.ico": "favicon.ico" in names,
+        "apple-touch-icon.png": "apple-touch-icon.png" in names,
+        "manifest": bool(
+            {"manifest.json", "manifest.webmanifest", "site.webmanifest"} & names
+        ),
+    }
+    absent = [k for k, ok in icons.items() if not ok]
+    add(
+        "아이콘",
+        "favicon·터치 아이콘·매니페스트",
+        "확인 필요" if absent else "통과",
+        ("없음: " + ", ".join(absent)) if absent else "모두 있음",
+    )
+
+    def resolves(href: str) -> bool:
+        path = href.lstrip("/")
+        if not path:
+            return "index.html" in names
+        path = path.rstrip("/")
+        return any(c in names for c in (path, path + ".html", path + "/index.html"))
+
+    broken = sorted((h, p) for h, p in links.items() if not resolves(h))
+    if pages:
+        add(
+            "경로",
+            "내부 링크",
+            "고칠 것" if broken else "통과",
+            (
+                "파일 없음: " + sample([f"{h} ({p}에서)" for h, p in broken])
+                if broken
+                else f"주소 {len(links)}개 모두 파일 있음"
+            ),
         )
 
     print("| 구분 | 항목 | 상태 | 내용 |")

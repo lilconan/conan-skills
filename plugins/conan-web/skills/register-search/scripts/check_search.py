@@ -90,8 +90,11 @@ def main() -> int:
         "있음" if canon else "확인 필요",
         canon.group(1) if canon else "없음",
     )
+    # Next.js renders hrefLang (camelCase), Astro and plain HTML render hreflang.
     alts = re.findall(
-        r'<link[^>]*rel="alternate"[^>]*hre[fF]Lang="([^"]+)"[^>]*href="([^"]+)"', html
+        r'<link[^>]*rel="alternate"[^>]*hreflang="([^"]+)"[^>]*href="([^"]+)"',
+        html,
+        re.IGNORECASE,
     )
     if alts:
         detail = ", ".join(f"{code}={url}" for code, url in alts)
