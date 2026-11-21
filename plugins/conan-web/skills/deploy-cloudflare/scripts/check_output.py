@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Checks a static build folder against Cloudflare Pages limits and launch basics.
 
-Usage: check_output.py <out-or-dist> [--site-url https://example.pages.dev]
+Usage: check_output.py <out-or-dist> [--site-url https://example.pages.dev] [--no-ads]
 
-Checks file limits, robots/sitemap/ads.txt/_headers/404, localhost URLs, placeholder
+Checks file limits, a root 404.html (without it Cloudflare Pages serves the home page
+with 200 for every unknown path), files that should not be published (notes, scripts,
+dotfiles, work folders), robots/sitemap/ads.txt/_headers, localhost URLs, placeholder
 values (fake contact emails, example ids) in published pages, page titles and share
-metadata, home-screen icons, and internal links that point at missing files.
+metadata, home-screen icons, and href/src references (absolute and relative) in HTML
+that point at missing files. Links built by JavaScript are not checked.
+--no-ads marks the ads.txt row as not applicable (sites without AdSense plans).
 Prints a Markdown table (Korean) and exits 1 when something must be fixed.
 Only reads files; it never modifies the folder.
 """
@@ -14,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import posixpath
 import re
 import sys
 
@@ -40,6 +45,9 @@ def main() -> int:
     parser.add_argument(
         "--site-url", help="expected production URL, e.g. https://name.pages.dev"
     )
+    parser.add_argument(
+        "--no-ads", action="store_true", help="site has no AdSense plans; skip ads.txt"
+    )
     args = parser.parse_args()
     root = args.folder.rstrip("/")
     if not os.path.isdir(root):
@@ -52,6 +60,7 @@ def main() -> int:
             path = os.path.join(dirpath, name)
             files.append((os.path.relpath(path, root), os.path.getsize(path)))
     files.sort(key=lambda f: -f[1])
+    rel_paths = [p.replace(os.sep, "/") for p, _ in files]
 
     rows = []  # (구분, 항목, 상태, 내용)
     fail = False
@@ -88,13 +97,44 @@ def main() -> int:
             biggest + (f" (20MB 넘는 파일 {len(near)}개)" if near else ""),
         )
 
-    names = {p for p, _ in files}
-    has_404 = "404.html" in names or "404/index.html" in names
+    names = set(rel_paths)
+    has_404 = "404.html" in names
     add(
         "경로",
         "404 페이지",
-        "통과" if has_404 else "확인 필요",
-        "404.html" if has_404 else "없으면 Cloudflare 기본 404가 나옵니다",
+        "통과" if has_404 else "고칠 것",
+        "루트에 404.html 있음"
+        if has_404
+        else "루트에 404.html 없음. Cloudflare Pages가 SPA로 보고 없는 주소에도 홈을 200으로 줍니다"
+        "(검색엔진에 중복 페이지). 진짜 SPA가 아니면 404.html을 두세요",
+    )
+
+    # Files that look like they were never meant to be public.
+    private_dir = re.compile(
+        r"(^|/)(node_modules|research_notes)/"
+    )
+    private_ext = re.compile(r"\.(md|py|pyc|sh|tsx|map|env|log|bak|swp)$", re.IGNORECASE)
+    private = [
+        p
+        for p in rel_paths
+        if private_dir.search(p)
+        or private_ext.search(p)
+        or any(
+            part.startswith(".") and part != ".well-known" for part in p.split("/")
+        )
+    ]
+    add(
+        "공개 범위",
+        "공개되면 안 되는 파일",
+        "고칠 것" if private else "통과",
+        (
+            f"{len(private)}개: "
+            + ", ".join(sorted(private)[:5])
+            + (" 외" if len(private) > 5 else "")
+            + ". 결과 폴더의 파일은 모두 주소로 열립니다. 빌드나 복사 목록에서 빼세요"
+        )
+        if private
+        else "메모·스크립트·숨김 파일·작업 폴더 없음",
     )
 
     robots = read(os.path.join(root, "robots.txt"))
@@ -149,12 +189,15 @@ def main() -> int:
             )
 
     ads = read(os.path.join(root, "ads.txt"))
-    if "ads.txt" not in names:
+    if args.no_ads:
+        add("애드센스", "ads.txt", "해당 없음", "수익화하지 않는 사이트(--no-ads)")
+    elif "ads.txt" not in names:
         add(
             "애드센스",
             "ads.txt",
             "확인 필요",
-            "없음. 정적 사이트는 404가 나가므로 주석 한 줄이라도 두고, 게시자 ID는 심사 요청 전에 넣으세요",
+            "없음. /ads.txt가 404가 되므로(404.html도 없으면 홈 HTML이 200으로 나감) 주석 한 줄이라도 두고, "
+            "게시자 ID는 심사 요청 전에 넣으세요. 수익화하지 않으면 --no-ads",
         )
     elif re.search(r"google\.com,\s*pub-\d+", ads):
         add("애드센스", "ads.txt", "통과", ads.strip().splitlines()[0][:80])
@@ -253,7 +296,32 @@ def main() -> int:
         [],
         set(),
     )
-    links = {}  # internal path -> first page that links to it
+    links = {}  # internal path (resolved, no leading slash) -> first page that links to it
+    ref_re = re.compile(r"\s(?:href|src)\s*=\s*(?:\"([^\"]*)\"|'([^']*)')", re.IGNORECASE)
+    skip_re = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|//|#|\{|\$)", re.IGNORECASE)
+
+    def collect_refs(page: str, html: str) -> None:
+        for m in ref_re.finditer(html):
+            ref = (m.group(1) if m.group(1) is not None else m.group(2)).strip()
+            if not ref or skip_re.match(ref) or "{{" in ref or "${" in ref:
+                continue
+            path = re.split(r"[?#]", ref, maxsplit=1)[0]
+            if path.startswith("/cdn-cgi/"):
+                continue
+            if path.startswith("/"):
+                target = path.lstrip("/")
+            else:
+                target = posixpath.normpath(posixpath.join(posixpath.dirname(page), path))
+                if target == ".":
+                    target = ""
+            if path.endswith("/") and target:
+                target += "/"
+            links.setdefault(target, page)
+
+    for page in sorted(names):
+        if page.endswith(".html") and page not in pages:
+            collect_refs(page, read(os.path.join(root, page)))  # 404 and similar pages
+
     for page in sorted(pages):
         html = read(os.path.join(root, page))
         titles = re.findall(r"<title[^>]*>([^<]*)</title>", html)
@@ -274,10 +342,7 @@ def main() -> int:
                 missing_image.add(path)
         if not meta(html, "twitter:image"):
             no_tw_image.append(page)
-        for href in re.findall(r"\shref=\"(/[^\"#?]*)", html):
-            if href.startswith(("//", "/cdn-cgi/")):
-                continue
-            links.setdefault(href, page)
+        collect_refs(page, html)
 
     def sample(items: list[str]) -> str:
         return ", ".join(items[:3]) + (
@@ -337,8 +402,9 @@ def main() -> int:
         ("없음: " + ", ".join(absent)) if absent else "모두 있음",
     )
 
-    def resolves(href: str) -> bool:
-        path = href.lstrip("/")
+    def resolves(path: str) -> bool:
+        if path.startswith(".."):
+            return False  # points outside the published folder
         if not path:
             return "index.html" in names
         path = path.rstrip("/")
@@ -346,21 +412,32 @@ def main() -> int:
 
     broken = sorted((h, p) for h, p in links.items() if not resolves(h))
     if pages:
-        add(
-            "경로",
-            "내부 링크",
-            "고칠 것" if broken else "통과",
-            (
-                "파일 없음: " + sample([f"{h} ({p}에서)" for h, p in broken])
-                if broken
-                else f"주소 {len(links)}개 모두 파일 있음"
-            ),
-        )
+        if broken:
+            add(
+                "경로",
+                "내부 링크·리소스",
+                "고칠 것",
+                "파일 없음: " + sample([f"{h if h.startswith('..') else '/' + h} ({p}에서)" for h, p in broken]),
+            )
+        elif links:
+            add(
+                "경로",
+                "내부 링크·리소스",
+                "통과",
+                f"href·src {len(links)}개 모두 파일 있음(JS가 만드는 링크는 검사하지 않음)",
+            )
+        else:
+            add(
+                "경로",
+                "내부 링크·리소스",
+                "확인 필요",
+                "검사할 href·src 없음. JS가 만드는 링크는 브라우저로 확인하세요",
+            )
 
     print("| 구분 | 항목 | 상태 | 내용 |")
     print("|---|---|---|---|")
     for row in rows:
-        print("| " + " | ".join(row) + " |")
+        print("| " + " | ".join(cell.replace("|", "\\|") for cell in row) + " |")
     print()
     print("큰 파일 상위 5개: " + ", ".join(f"{p} {human(s)}" for p, s in files[:5]))
     return 1 if fail else 0

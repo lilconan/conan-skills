@@ -18,22 +18,29 @@
 
 ## A. 대시보드에서 Git 연결 (기본)
 
-Cloudflare 가입과 GitHub 연결 권한 허용(OAuth)은 사용자가 직접 해야 하므로, 프로젝트를 처음 연결하는 이 과정은 사용자에게 맡기고 아래 내용을 채워서 안내한다. 연결된 뒤의 설정 변경(환경 변수, 다시 배포)은 사용자가 로그인한 Claude in Chrome으로 대신할 수 있다.
+역할 분담: Cloudflare 가입·로그인, GitHub 앱 설치와 저장소 접근 허용(OAuth 승인)은 사용자가 한다. 그 뒤의 프로젝트 생성·빌드 설정 입력, 연결된 뒤의 설정 변경(환경 변수, 다시 배포)은 사용자가 맡기면 로그인된 Claude in Chrome으로 대신할 수 있다. 사용자가 직접 하겠다면 아래 내용을 채워서 안내한다.
 
 1. https://dash.cloudflare.com 에 가입하고 로그인한다.
-2. **Workers & Pages → Create → Pages → Connect to Git**을 고르고 GitHub를 연결한다. 저장소 권한은 해당 저장소 하나만 허용해도 된다.
-3. **프로젝트 이름**을 정한다. 주소가 `https://<프로젝트 이름>.pages.dev`가 되고 나중에 바꿀 수 없으므로 먼저 정한다. 이미 쓰인 이름이면 뒤에 문자가 붙을 수 있으니, 만든 뒤 실제 주소를 확인하고 사이트 주소 변수와 맞춘다.
+2. **Workers & Pages → Create application → Pages → Connect to Git**으로 간다(2026-11 기준). 기본 화면은 Workers를 만들게 이끌므로 "Pages" 또는 "Continue to Pages" 같은 링크를 찾는다. 생성 URL을 바로 열면 빈 화면이 나오기도 하니 메뉴로 들어간다. 버튼 이름은 자주 바뀌므로 "Pages · Connect to Git"을 목표로 찾는다. GitHub 앱(Cloudflare Workers and Pages)을 처음 설치할 때는 *Only select repositories*로 이 저장소만 허용한다.
+   - **저장소가 목록에 안 보일 때:** 앱을 예전에 다른 저장소만 허용해 설치해 둔 경우다. 사용자에게 아래 순서를 하나씩 안내한다(이 화면은 처음 보면 헷갈려하므로 "무엇을 누르는지"를 구체적으로 적는다).
+     1. https://github.com/settings/installations 를 연다. 조직 저장소라면 먼저 오른쪽 위 Switch settings context에서 조직을 고른다.
+     2. "Cloudflare Workers and Pages" 옆의 **Configure**를 누른다.
+     3. 페이지 아래쪽 **Repository access**에서 *Only select repositories*가 선택된 상태로 **Select repositories** 드롭다운에 저장소 이름을 입력해 고른다.
+     4. 초록색 **Save**를 누른다.
+     5. Cloudflare 화면으로 돌아와 새로 고친다.
+     저장소를 공개로 바꾸라고 하지 않는다. *All repositories*로 넓히는 것도 사용자가 원할 때만 한다.
+3. **프로젝트 이름**을 정한다. 주소가 `https://<프로젝트 이름>.pages.dev`가 되고 나중에 바꿀 수 없다(바꾸려면 프로젝트를 지우고 다시 만든다). 이름에는 영어 소문자·숫자·하이픈만 쓴다. 사용자가 원한 이름에 밑줄이나 대문자가 있으면 바꾼 안(예: `kmb_portfolio` → `kmb-portfolio`)을 먼저 제안한다. 기본값은 저장소 이름이지만 저장소 이름과 달라도 된다. 이미 쓰인 이름이면 다른 하위 도메인이 배정될 수 있으니(경험칙, 공식 문서에는 없음), 만든 뒤 실제 주소를 확인하고 사이트 주소와 맞춘다.
 4. 빌드 설정 표를 채운다.
 
-   | 항목 | Next.js | Astro | Vite |
-   |---|---|---|---|
-   | Framework preset | None | Astro (또는 None) | None |
-   | Build command | `npm run build` | `npm run build` | `npm run build` |
-   | Build output directory | `out` | `dist` | `dist` (`build.outDir`) |
+   | 항목 | Next.js | Astro | Vite | 빌드 없는 일반 HTML |
+   |---|---|---|---|---|
+   | Framework preset | None | Astro (또는 None) | None | None |
+   | Build command | `npm run build` | `npm run build` | `npm run build` | `sh tools/build_site.sh` (화이트리스트 복사) |
+   | Build output directory | `out` | `dist` | `dist` (`build.outDir`) | `dist` |
 
-   preset은 빌드 명령과 결과 폴더를 채워 주는 편의 기능일 뿐이라, None으로 두고 직접 넣어도 결과는 같다.
+   preset은 빌드 명령과 결과 폴더를 채워 주는 편의 기능일 뿐이라, None으로 두고 직접 넣어도 결과는 같다. 빌드 없는 사이트에서 빌드 명령을 비우고 출력 폴더를 `/`로 두면 저장소 전체가 공개되므로 그렇게 하지 않는다([plain-html.md](plain-html.md)).
 
-5. **Environment variables**: 프로젝트의 변수 목록으로 표를 만든다. 최소한 `NODE_VERSION`과 사이트 주소 변수가 들어간다. 각 변수에 "필수 / 비워도 됨 / 애드센스 심사 요청 전"을 표시한다.
+5. **Environment variables**: 프로젝트의 변수 목록으로 표를 만든다. Node로 빌드하면 최소한 `NODE_VERSION`과 사이트 주소 변수가 들어간다. 빌드 없는 사이트는 변수가 없을 수 있고, 그때는 사이트 주소가 직접 적힌 파일 목록을 `DEPLOY.md`에 남긴다. 각 변수에 "필수 / 비워도 됨 / 애드센스 심사 요청 전"을 표시한다.
    - `NODE_VERSION`: 지원 기간 안의 LTS 메이저 버전을 쓴다. Node 20은 2026-04-30에 지원이 끝났으므로 22 이상을 쓴다. 로컬 버전(`node -v`)과 메이저가 다르면 빌드 결과가 달라질 수 있으니 맞추는 것이 좋다. 프로젝트 문서에 20이 적혀 있으면 고칠 것으로 보고한다.
    - 공개되는 값(문의 이메일, 운영자 이름)은 "사실상 필수"로 표시한다. 빠뜨리면 기본값이 공개된다.
 6. **Save and Deploy**. 첫 빌드는 몇 분 걸린다. 실패하면 빌드 로그 전체를 붙여 달라고 한다.
@@ -58,7 +65,7 @@ npx wrangler@latest pages deploy <out-or-dist> --project-name <name>
 
 ## 직접 산 도메인
 
-애드센스를 신청하려면 대개 자기 도메인이 필요하다(`*.pages.dev`는 Cloudflare 소유). 옮길 때 할 일:
+애드센스는 공식 기준으로 `*.pages.dev`도 사이트로 받는다(`pages.dev`가 Public Suffix List에 있음). 다만 나중에 도메인을 바꾸면 애드센스·서치 콘솔·색인을 다시 만들어야 하므로, 신청 전에 자기 도메인을 정하는 편이 낫다. 옮길 때 할 일:
 
 1. 도메인을 사서(Cloudflare Registrar를 쓰면 DNS 설정이 간단하다) 프로젝트의 **Custom domains**에 추가한다. 사용자가 직접 하는 일이다.
 2. 사이트 주소 변수(또는 설정 파일 값)를 새 주소로 바꾸고 다시 배포한다. 사이트맵·canonical·robots가 새 주소로 바뀌었는지 확인한다.
@@ -71,9 +78,9 @@ npx wrangler@latest pages deploy <out-or-dist> --project-name <name>
 
 사용자가 "애드센스 어떻게 신청해?"라고 물으면 아래 순서를 안내한다.
 
-1. 자기 도메인 연결(위 "직접 산 도메인" 1~5). Cloudflare Registrar로 사면 같은 계정에서 Pages에 바로 연결할 수 있다.
+1. (권장) 자기 도메인 연결(위 "직접 산 도메인" 1~5). `*.pages.dev` 그대로도 신청할 수 있지만, 승인 뒤에 옮기는 비용이 크다. Cloudflare Registrar로 사면 같은 계정에서 Pages에 바로 연결할 수 있다.
 2. 애드센스 가입과 약관 동의: 사용자가 직접 한다.
 3. 발급받은 게시자 ID(`ca-pub-…`)를 환경 변수에 넣고 다시 배포한다. `ads.txt`와 광고 스크립트가 실제 주소에 나오는지 확인한다. **심사를 요청하기 전에** 해야 한다.
 4. 애드센스에서 사이트 확인 → 심사 요청. 심사는 며칠에서 2~4주 걸린다.
-5. 애드센스에 사이트를 추가한 뒤 "개인정보 보호 및 메시지"에서 유럽(GDPR) 동의 메시지를 만든다. 늦어도 승인 직후, 광고가 나가기 전에는 켜져 있어야 한다.
+5. 애드센스에 사이트를 추가한 뒤 "개인정보 보호 및 메시지"에서 European regulations 메시지를 만든다. EEA·영국·스위스 방문자에게 맞춤 광고를 내려면 Google 인증 CMP(IAB TCF)가 필수이고(2024년부터), 이 메시지가 가장 쉬운 인증 CMP다. 직접 만든 배너만 쓰면 유럽에는 비맞춤·제한 광고만 나간다. 늦어도 승인 직후, 광고가 나가기 전에는 켜져 있어야 한다.
 6. 승인 뒤: 자동 광고 켜기. 수익이 약 10달러가 되면 오는 PIN 우편, 세금 정보(W-8BEN), 은행 계좌 입력은 모두 사용자만 할 수 있다. 지급은 100달러부터다.

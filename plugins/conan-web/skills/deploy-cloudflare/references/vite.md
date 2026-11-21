@@ -1,18 +1,18 @@
-# Vite(일반 HTML·JS) 정적 사이트 점검
+# Vite 정적 사이트 점검
 
-기준: 프레임워크 없이 `index.html`과 `vite build`로 만드는 작은 도구 사이트.
+기준: 프레임워크 없이 `index.html`과 `vite build`로 만드는 작은 도구 사이트. `package.json`도 빌드 도구도 없는 일반 HTML 사이트는 [plain-html.md](plain-html.md)를 본다.
 
 ## 설정
 
 - 결과 폴더는 `vite.config.*`의 `build.outDir`이며 기본값은 `dist/`다. `dist/`는 `.gitignore`에 넣는다(Cloudflare가 소스에서 다시 빌드한다).
-- 여러 페이지(소개, 개인정보처리방침 등)가 필요하면 `build.rollupOptions.input`에 HTML 파일을 모두 넣어야 결과에 포함된다. 빠뜨린 페이지는 배포 후 404가 된다.
+- 여러 페이지(소개, 개인정보처리방침 등)가 필요하면 `build.rolldownOptions.input`(Vite 8 이상. 7 이하는 `build.rollupOptions.input`)에 HTML 파일을 모두 넣어야 결과에 포함된다. Vite 8에서도 옛 이름이 당분간 동작하지만 deprecated다. 빠뜨린 페이지는 배포 후 404가 된다.
 - `public/`의 파일은 그대로 결과 폴더 루트로 복사된다. 모델·데이터·`_headers`·`robots.txt`·고정 `ads.txt`는 `public/`에 둔다. **결과 폴더에만 있는 파일은 Cloudflare 빌드에서 사라진다.**
 - 소스의 `index.html`이 `<script type="module" src="/main.js">`처럼 소스 파일을 직접 가리키는 것은 정상이다. 빌드 결과의 `index.html`은 해시가 붙은 `/assets/*.js`를 가리켜야 한다. 결과 폴더의 `index.html`이 소스와 똑같다면 빌드하지 않고 손으로 복사한 것이니 다시 빌드한다.
 
 ## 사이트 주소, 사이트맵, robots
 
 - Vite는 사이트맵을 만들어 주지 않는다. 사이트 주소를 환경 변수(`VITE_SITE_URL` 또는 `SITE_URL`)로 받아 빌드 때 `sitemap.xml`과 `robots.txt`를 만드는 작은 스크립트나 플러그인(예: `vite-plugin-sitemap`)을 쓴다. 주소를 손으로 적은 사이트맵은 localhost가 남기 쉽다.
-- 예: 빌드 때 `sitemap.xml`과 `robots.txt`를 만드는 플러그인. 페이지 목록(`PAGES`)은 `rollupOptions.input`과 맞춘다.
+- 예: 빌드 때 `sitemap.xml`과 `robots.txt`를 만드는 플러그인. 페이지 목록(`PAGES`)은 `rolldownOptions.input`(7 이하는 `rollupOptions.input`)과 맞춘다. 빌드한 뒤 `dist/sitemap.xml`·`robots.txt`가 실제로 생겼는지 확인한다.
   ```js
   // vite.config.js
   const SITE_URL = (process.env.SITE_URL || "http://localhost:5173").replace(/\/$/, "");
