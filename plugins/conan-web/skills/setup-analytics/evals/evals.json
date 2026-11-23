@@ -21,7 +21,7 @@
   },
   {
    "id": 2,
-   "prompt": "tone-mixer라는 새 사이트(/Users/conanconan/conan-skills/plugins/conan-web/skills/deploy-cloudflare-workspace/fixtures/tone-mixer, Vite)를 cloudflare에 tone-mixer.pages.dev로 올렸다고 치고, 여기에 GA 붙이고 싶어. 어떻게 하면 돼?",
+   "prompt": "tone-mixer라는 새 사이트(plugins/conan-web/skills/deploy-cloudflare-workspace/fixtures/tone-mixer, Vite)를 cloudflare에 tone-mixer.pages.dev로 올렸다고 치고, 여기에 GA 붙이고 싶어. 어떻게 하면 돼?",
    "expected_output": "코드 점검: index.html에 G-TEST123 자리표시자가 직접 박혀 있고 동의 기본값이 없음을 지적. 어느 구글 계정에 만들지 묻기, 속성·웹 스트림 만들기, 파일 다운로드·양식 상호작용 끄기, 측정 ID를 VITE_ 환경 변수나 index.html에 넣는 방법, 다시 배포, 확인 스크립트와 실시간 보고서. 한국어",
    "files": [],
    "assertions": [

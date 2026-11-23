@@ -18,7 +18,7 @@
   },
   {
    "id": 2,
-   "prompt": "tone-mixer(/Users/conanconan/conan-skills/plugins/conan-web/skills/deploy-cloudflare-workspace/fixtures/tone-mixer, Vite)를 tone-mixer.pages.dev로 배포했다고 치고, 구글이랑 네이버 검색에 나오게 하고 싶어. 뭐부터 하면 돼?",
+   "prompt": "tone-mixer(plugins/conan-web/skills/deploy-cloudflare-workspace/fixtures/tone-mixer, Vite)를 tone-mixer.pages.dev로 배포했다고 치고, 구글이랑 네이버 검색에 나오게 하고 싶어. 뭐부터 하면 돼?",
    "expected_output": "사이트맵 localhost·robots 없음부터 고치기, 서치 콘솔은 URL 접두어(도메인 속성 불가), HTML 태그 인증 값을 Vite에 넣는 방법, 네이버는 사용자가 직접(값 받기), 배포 후 소유 확인·사이트맵 제출, Bing은 서치 콘솔 가져오기(권한 허용은 승인 후). 한국어",
    "files": [],
    "assertions": [
