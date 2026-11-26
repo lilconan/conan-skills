@@ -1,5 +1,14 @@
 # conan-web 변경 기록
 
+## 0.6.3 (2026-11-26)
+
+근거: 같은 날 kmb-portfolio에서 집 IP를 내부 트래픽으로 빼며 확인한 순서.
+
+- `setup-analytics` 0.4.2
+  - `references/ga4-console.md` 9절 "내부 트래픽 빼기": IP 확인(IPv4·IPv6), 태그 설정이 Tag Manager iframe 패널로 열림, 규칙 저장 뒤 **제출·게시**가 있어야 적용됨, 데이터 필터 `사용중`과 되돌릴 수 없다는 확인 창, `/g/collect`의 `tt=internal`로 확인, 빠지는 범위(그 속성 하나, 그 IP만).
+  - 데이터 필터 화면 주소(`admin/datapolicies/datafilters`) 추가.
+  - 6단계 안내: 내부 트래픽, 브라우저별 제외(`?notrack`), 출처별 `?ref` 링크를 목적에 따라 고르게 함.
+
 ## 0.6.2 (2026-11-26)
 
 근거: 2026-11-26 포트폴리오(빌드 없는 일반 HTML)에 GA4를 붙인 뒤, `check_ga.py`가 JS 모듈에서 넣는 태그를 읽지 못해 "측정 ID 없음"으로 잘못 판정함.
